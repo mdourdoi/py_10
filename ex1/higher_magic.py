@@ -47,30 +47,34 @@ if __name__ == "__main__":
         print(f"Fireball hits {target}!")
         return power
 
-    def heal(target: str, amount: int) -> int:
+    def heal(target: str, power: int) -> int:
         print(f"Heals {target}!")
-        return amount
+        return power
 
     def can_cast(target: str, power: int) -> bool:
         return power >= 10
+    print()
 
     print("Testing spell combiner...")
     combined_spell = spell_combiner(fireball, heal)
     result = combined_spell("Dragon", 10)
     print(f"Combined spell result: {result}")
+    print()
 
-    print("\nTesting power amplifier...")
+    print("Testing power amplifier...")
     mega_fireball = power_amplifier(fireball, 3)
     original = fireball("Goblin", 10)
     amplified = mega_fireball("Goblin", 10)
     print(f"Original: {original}, Amplified: {amplified}")
+    print()
 
-    print("\nTesting conditional caster...")
+    print("Testing conditional caster...")
     safe_fireball = conditional_caster(can_cast, fireball)
     print(f"Cast with 15 power: {safe_fireball('Ogre', 15)}")
     print(f"Cast with 5 power: {safe_fireball('Ogre', 5)}")
+    print()
 
-    print("\nTesting spell sequence...")
+    print("Testing spell sequence...")
     sequence = spell_sequence([fireball, heal])
     seq_results = sequence("Knight", 12)
     print(f"Sequence results: {seq_results}")
