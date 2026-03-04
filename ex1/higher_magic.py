@@ -41,7 +41,7 @@ def spell_sequence(spells: List[Callable[..., Any]]) -> Callable[..., Any]:
     return in_sequence
 
 
-if __name__ == "__main__":
+def main() -> None:
 
     def fireball(target: str, power: int) -> int:
         print(f"Fireball hits {target}!")
@@ -78,3 +78,10 @@ if __name__ == "__main__":
     sequence = spell_sequence([fireball, heal])
     seq_results = sequence("Knight", 12)
     print(f"Sequence results: {seq_results}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as cur_error:
+        print(f'Error: {cur_error}')
