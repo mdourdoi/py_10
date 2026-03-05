@@ -1,4 +1,4 @@
-from time import time
+from time import time, sleep
 from functools import wraps
 from typing import Callable, Any
 
@@ -18,12 +18,11 @@ def spell_timer(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 def power_validator(min_power: int) -> Callable[..., Any]:
-
     def decorator(func: Callable[..., Any]) -> Callable[..., Any | str]:
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any | str:
-            if args[0] >= min_power:
+            if args[1] >= min_power:
                 return func(*args, **kwargs)
             return 'Insufficient power for this spell'
 
@@ -32,9 +31,9 @@ def power_validator(min_power: int) -> Callable[..., Any]:
     return decorator
 
 
-def retry_spell(max_attempts: int) -> Callable[..., Any]:
+def retry_spell(max_attempts: int) -> Callable[..., Any | str]:
 
-    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any | str]:
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any | str:
@@ -50,3 +49,66 @@ def retry_spell(max_attempts: int) -> Callable[..., Any]:
         return wrapper
 
     return decorator
+
+
+class MageGuild():
+
+    @staticmethod
+    def validate_mage_name(name: str) -> bool:
+        if len(name) < 3:
+            return False
+        return name.replace(' ', '').isalpha()
+
+    @power_validator(10)
+    def cast_spell(self, power: int, spell_name: str) -> str:
+        '''Modified signature because the decorator is supposed to look at the
+        first argument (after self) and it is supposed to be "power"'''
+        return f'Successfully cast {spell_name} with {power} power'
+
+
+def main() -> None:
+
+    print()
+    print("Testing spell timer...")
+
+    @spell_timer
+    def quick_spell() -> str:
+        sleep(0.10)
+        return "Quick spell cast!"
+
+    print(quick_spell())
+    print()
+
+    print("Testing power validator (MageGuild.cast_spell)...")
+    guild = MageGuild()
+    print(guild.cast_spell(5, "Fireball"))
+    print(guild.cast_spell(15, "Fireball"))
+    print()
+
+    print("Testing retry spell...")
+
+    attempts = {"count": 0}
+
+    @retry_spell(3)
+    def unstable_spell() -> str:
+        attempts["count"] += 1
+        if attempts["count"] < 3:
+            raise RuntimeError("Spell fizzled")
+        return "Unstable spell succeeded!"
+
+    print(unstable_spell())
+    print()
+
+    print("Testing mage name validation...")
+    print("Gandalf ->", MageGuild.validate_mage_name("Gandalf"))
+    print("Gandalf the Grey ->",
+          MageGuild.validate_mage_name("Gandalf the Grey"))
+    print("Ga ->", MageGuild.validate_mage_name("Ga"))
+    print("123 ->", MageGuild.validate_mage_name("123"))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as cur_error:
+        print(f'Error: {cur_error}')
