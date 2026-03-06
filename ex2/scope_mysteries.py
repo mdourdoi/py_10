@@ -38,7 +38,7 @@ def memory_vault() -> Dict[str, Callable[..., Any]]:
         vault[key] = value
 
     def recall(key: Any) -> Any | str:
-        return vault.get(key, 'Memory not found"')
+        return vault.get(key, 'Memory not found')
 
     return {'store': store, 'recall': recall}
 

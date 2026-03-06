@@ -22,9 +22,12 @@ def power_validator(min_power: int) -> Callable[..., Any]:
 
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any | str:
-            if args[1] >= min_power:
-                return func(*args, **kwargs)
-            return 'Insufficient power for this spell'
+            power = kwargs.get("power")
+            if power is None:
+                power = args[1]
+            if power < min_power:
+                return 'Insufficient power for this spell'
+            return func(*args, **kwargs)
 
         return wrapper
 
